@@ -2,7 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCountryRequest;
+use App\Http\Requests\UpdateCountryRequest;
+use App\Models\Country;
+use App\Tables\Countries;
 use Illuminate\Http\Request;
+use ProtoneMedia\Splade\Facades\Splade;
+use ProtoneMedia\Splade\FormBuilder\Input;
+use ProtoneMedia\Splade\FormBuilder\Submit;
+use ProtoneMedia\Splade\SpladeForm;
 
 class CountryController extends Controller
 {
@@ -11,7 +19,9 @@ class CountryController extends Controller
      */
     public function index()
     {
-        //
+        return view('admin.countries.index', [
+            'countries' => Countries::class
+        ]);
     }
 
     /**
@@ -19,15 +29,18 @@ class CountryController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.countries.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreCountryRequest $request)
     {
-        //
+        Country::create($request->validated());
+        Splade::toast('Country created')->autoDismiss(3);
+
+        return to_route('admin.countries.index');
     }
 
     /**
@@ -41,24 +54,43 @@ class CountryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Country $country)
     {
-        //
+        $form = SpladeForm::make()
+            ->action(route('admin.countries.update', $country))
+            ->fields([
+                Input::make('name')->label('Country Name'),
+                Input::make('code')->label('Code'),
+                Submit::make()->label('Update'),
+            ])
+            ->fill($country)
+            ->method('PATCH')
+            ->class('p-4 space-y-3 bg-white border rounded shadow');
+
+        return view('admin.countries.edit', [
+            'form' => $form,
+            'country' => $country
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateCountryRequest $request, Country $country)
     {
-        //
+        $country->update($request->validated());
+        Splade::toast('Country created')->autoDismiss(3);
+
+        return to_route('admin.countries.index');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Country $country)
     {
-        //
+        $country->delete();
+        Splade::toast('Country deleted')->autoDismiss(3);
+        return back();
     }
 }

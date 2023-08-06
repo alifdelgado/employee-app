@@ -2,7 +2,7 @@
 
 namespace App\Tables;
 
-use App\Models\User;
+use App\Models\Country;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use ProtoneMedia\Splade\AbstractTable;
@@ -10,7 +10,7 @@ use ProtoneMedia\Splade\SpladeTable;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
-class Users extends AbstractTable
+class Countries extends AbstractTable
 {
     /**
      * Create a new instance.
@@ -43,20 +43,17 @@ class Users extends AbstractTable
             $query->where(function ($query) use ($value) {
                 Collection::wrap($value)->each(function ($value) use ($query) {
                     $query
-                        ->orWhere('username', 'LIKE', "%{$value}%")
-                        ->orWhere('first_name', 'LIKE', "%{$value}%")
-                        ->orWhere('last_name', 'LIKE', "%{$value}%")
-                        ->orWhere('email', 'LIKE', "%{$value}%");
+                        ->orWhere('name', 'LIKE', "%{$value}%")
+                        ->orWhere('code', 'LIKE', "%{$value}%");
                 });
             });
         });
 
 
-        return QueryBuilder::for(User::class)
+        return QueryBuilder::for(Country::class)
                     ->defaultSort('id')
-                    ->allowedSorts(['id', 'username', 'first_name', 'last_name', 'email', 'created_at'])
-                    ->allowedFilters(['username', 'first_name', 'last_name', 'email', $globalSearch]);
-
+                    ->allowedSorts(['id', 'name', 'code'])
+                    ->allowedFilters(['name', 'code', $globalSearch]);
     }
 
     /**
@@ -68,13 +65,10 @@ class Users extends AbstractTable
     public function configure(SpladeTable $table)
     {
         $table
-            ->withGlobalSearch(columns: ['id', 'username', 'first_name', 'last_name', 'email'])
+            ->withGlobalSearch(columns: ['id', 'name', 'code'])
             ->column('id', sortable: true)
-            ->column('username', sortable: true)
-            ->column('first_name', sortable: true)
-            ->column('last_name', sortable: true)
-            ->column('email', sortable: true)
-            ->column('created_at', sortable: true)
+            ->column('name', sortable: true)
+            ->column('code', sortable: true)
             // ->rowLink(function (User $user) {
             //     return route('admin.users.edit', $user);
             // })
