@@ -47,7 +47,7 @@ Route::middleware('splade')->group(function () {
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-        Route::prefix('/admin')->name('admin.')->group(function () {
+        Route::middleware('role:admin')->prefix('/admin')->name('admin.')->group(function () {
             Route::get('', [AdminController::class, 'index'])->name('index');
             Route::resource('/cities', CityController::class);
             Route::resource('/countries', CountryController::class);
@@ -56,8 +56,6 @@ Route::middleware('splade')->group(function () {
             Route::resource('/states', StateController::class);
             Route::resource('/users', UserController::class);
         });
-
-
     });
 
     require __DIR__.'/auth.php';
