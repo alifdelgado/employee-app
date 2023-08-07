@@ -6,6 +6,8 @@
         <x-splade-input name="first_name" label="First name" />
         <x-splade-input name="last_name" label="Last name" />
         <x-splade-input name="email" label="Email address" />
+        <x-splade-select name="roles[]" :label="__('Select roles')" :options="$roles" multiple relation choices />
+        <x-splade-select name="permissions[]" :label="__('Select permissions')" :options="$permissions" multiple relation choices />
         <x-splade-submit />
     </x-splade-form>
 </x-admin-layout>
