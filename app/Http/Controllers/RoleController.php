@@ -61,7 +61,7 @@ class RoleController extends Controller
                                 ->label('Submit')
                     ])->fill($role);
 
-        return view('admin.departments.edit', [
+        return view('admin.roles.edit', [
             'form' => $form
         ]);
     }
