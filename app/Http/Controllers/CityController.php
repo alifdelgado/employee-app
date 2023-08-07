@@ -59,7 +59,6 @@ class CityController extends Controller
         Splade::toast('City created')->autoDismiss(3);
 
         return to_route('admin.cities.index');
-
     }
 
     /**
@@ -69,18 +68,18 @@ class CityController extends Controller
     {
 
         $form = SpladeForm::make()
-                            ->action(route('admin.cities.update', $city))
-                            ->method('PATCH')
-                            ->class('p-4 space-y-3 bg-white border rounded shadow')
-                            ->fields([
-                                Input::make('name')
-                                        ->label('Name'),
-                                Select::make('state_id')
-                                        ->options(State::pluck('name', 'id')->toArray())
-                                        ->label('Choose a State'),
-                                Submit::make()
-                                        ->label('Submit')
-                            ])->fill($city);
+                    ->action(route('admin.cities.update', $city))
+                    ->method('PATCH')
+                    ->class('p-4 space-y-3 bg-white border rounded shadow')
+                    ->fields([
+                        Input::make('name')
+                                ->label('Name'),
+                        Select::make('state_id')
+                                ->options(State::pluck('name', 'id')->toArray())
+                                ->label('Choose a State'),
+                        Submit::make()
+                                ->label('Submit')
+                    ])->fill($city);
 
 
         return view('admin.cities.edit', [
@@ -97,7 +96,6 @@ class CityController extends Controller
         Splade::toast('City updated')->autoDismiss(3);
 
         return to_route('admin.cities.index');
-
     }
 
     /**

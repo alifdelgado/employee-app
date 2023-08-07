@@ -2,8 +2,9 @@
 
 namespace App\Tables;
 
-use App\Models\Country;
-use App\Models\State;
+use App\Models\City;
+use App\Models\Department;
+use App\Models\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use ProtoneMedia\Splade\AbstractTable;
@@ -11,7 +12,7 @@ use ProtoneMedia\Splade\SpladeTable;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
-class States extends AbstractTable
+class Employees extends AbstractTable
 {
     /**
      * Create a new instance.
@@ -44,15 +45,17 @@ class States extends AbstractTable
             $query->where(function ($query) use ($value) {
                 Collection::wrap($value)->each(function ($value) use ($query) {
                     $query
-                        ->orWhere('name', 'LIKE', "%{$value}%");
+                        ->orWhere('first_name', 'LIKE', "%{$value}%")
+                        ->orWhere('last_name', 'LIKE', "%{$value}%")
+                    ;
                 });
             });
         });
 
-        return QueryBuilder::for(State::class)
+        return QueryBuilder::for(Employee::class)
                     ->defaultSort('id')
-                    ->allowedSorts(['id', 'name'])
-                    ->allowedFilters(['name', 'country_id', $globalSearch]);
+                    ->allowedSorts(['id', 'first_name', 'last_name'])
+                    ->allowedFilters(['id', 'first_name', 'last_name', 'city_id', 'department_id', $globalSearch]);
     }
 
     /**
@@ -66,15 +69,24 @@ class States extends AbstractTable
         $table
             ->withGlobalSearch(columns: ['name'])
             ->column('id', sortable: true)
-            ->column('name', sortable: true)
-            ->column(key: 'country.name', label: 'Country', sortable: true)
-            ->column('action', sortable: false)
-            ->selectFilter(
-                key: 'country_id',
-                options: Country::pluck('name', 'id')->toArray(),
-                label: 'Country'
+            ->column('first_name', sortable: true)
+            ->column('last_name', sortable: true)
+            ->column(key: 'city.name', label: 'City', sortable: true)
+            ->column(key: 'department.name', label: 'Department', sortable: true)
+            ->column(
+                'action',
+                sortable: false
             )
-            ->paginate(15)
-        ;
+            ->selectFilter(
+                key: 'city_id',
+                options: City::pluck('name', 'id')->toArray(),
+                label: 'City'
+            )
+            ->selectFilter(
+                key: 'department_id',
+                options: Department::pluck('name', 'id')->toArray(),
+                label: 'Department'
+            )
+            ->paginate(15);
     }
 }
